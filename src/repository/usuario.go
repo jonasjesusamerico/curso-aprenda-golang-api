@@ -146,5 +146,21 @@ func (repositorio Usuarios) BuscarPorEmail(email string) (modelos.Usuario, error
 	}
 
 	return usuario, nil
+}
 
+func (repositorio Usuarios) Seguir(usuarioId, seguirId uint64) error {
+	statemant, err := repositorio.db.Prepare(
+		"insert ignore into seguidores (usuario_id, seguidor_id) values (?, ?)",
+	)
+
+	if err != nil {
+		return err
+	}
+	defer statemant.Close()
+
+	if _, err = statemant.Exec(usuarioId, seguirId); err != nil {
+		return err
+	}
+
+	return nil
 }
